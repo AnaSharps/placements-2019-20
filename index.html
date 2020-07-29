@@ -3,12 +3,16 @@
     <head>
         <title>IITK Placement 2019-20</title>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <!-- Compiled and minified JavaScript -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <style>
+            @media only screen and (max-width: 600px) {
+                .brand-logo {
+                    font-size: 1.4rem!important;
+                }
+            }
             * {
             box-sizing: border-box;
             }
@@ -110,12 +114,12 @@
                 <div class="col left-align">
                     <h4 style="margin: 0">Filter</h4>
                 </div>
-                <div class="col s2 dept-dropdown" style="position: relative;">
-                    <input  type="text" id="dept" placeholder="Department" style="margin: 0 .75rem;"/>
+                <div class="col dept-dropdown" style="position: relative;">
+                    <input  type="text" id="dept" placeholder="Department" style="margin: 0 .75rem;" size=10/>
                     <div class="dropcontent" hidden></div>
                 </div>
-                <div class="col s2 offset-s1 program-dropdown" style="position: relative;">
-                    <input  type="text" id="program" placeholder="Program" style="margin: 0 .75rem;"/>
+                <div class="col program-dropdown" style="position: relative;">
+                    <input  type="text" id="program" placeholder="Program" style="margin: 0 .75rem;" size="11"/>
                     <div class="dropcontent" hidden></div>
                 </div>
             </div>
