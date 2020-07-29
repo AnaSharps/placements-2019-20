@@ -8,8 +8,19 @@
 
         <!-- Compiled and minified JavaScript -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-            
         <style>
+            * {
+            box-sizing: border-box;
+            }
+            *:before,
+            *:after {
+            box-sizing: border-box;
+            }
+            html,
+            body {
+            height: 100%;
+            position: relative;
+            }
             body {
                 background-color: #121212;
                 color: rgba(255,255,255,0.88);
@@ -25,46 +36,346 @@
             /* .container {
                 margin: 2rem auto;
             } */
+            .autocomplete-items {
+                max-height: 300px;
+                position: absolute;
+                background: #212121;
+                top: calc( 100% + 10px );
+                color: rgba(255,255,255,0.88);
+                overflow-y: scroll;
+                z-index: 1;
+                width: 100%;
+                border: solid 1px #595959;
+                border-radius: 2px;
+                user-select: none;
+                cursor: pointer;
+            }
+            .autocomplete-items div {
+                border-bottom: 1px solid #595959;
+                padding: 4px 0;
+            }
+            .autocomplete-items div:hover {
+                background-color: #1c1c1c;
+                transition: all ease-out 0.1s;
+            }
+            /* .dropcontent li {
+                list-style: none;
+                padding: 5px 0;
+                cursor: pointer;
+            } */
             footer {
+                margin-top: -47px;
                 background-color: rgba(255,255,255,0.1);
                 padding: 10px 0px;
             }
-            footer h4 {
+            footer h5 {
+                color: rgba(255,255,255,0.60);
                 margin-bottom: 0;
                 margin-top: 0;
+            }
+            .collection {
+                border: 1px solid rgba(255,255,255,0.1);
+            }
+            .collection .collection-item {
+                background-color: rgba(255,255,255,0.05);
+                border-bottom: 1px solid #e0e0e0;
+                color: #4FBCFF!important;
+            }
+            .collection-item:hover {
+                background-color: rgba(255,255,255,0.02)!important;
+            }
+            input {
+                color: rgba(255,255,255,0.88);
+                border-color: #4FBCFF!important
+            }
+            .main-contain {
+                min-height: 100vh;
+                overflow: hidden;
+                display: block;
+                padding-bottom: 47px; /* height of your footer */
             }
         </style>
     </head>
     <body>
+        <div class="main-contain">
         <nav>
             <div class="nav-wrapper">
             <a href="#" class="brand-logo center">IITK Placement archive 19-20</a>
             </div>
         </nav>
-          
-        <div class="container">
-            <ul class="list-group">
-            </ul>
+        <div class="container center-align" style="
+        padding-top: 20px;
+    ">
+            <div class="row baseline-wrapper">
+                <div class="col left-align">
+                    <h4 style="margin: 0">Filter</h4>
+                </div>
+                <div class="col s2 dept-dropdown" style="position: relative;">
+                    <input  type="text" id="dept" placeholder="Department" style="margin: 0 .75rem;"/>
+                    <div class="dropcontent" hidden></div>
+                </div>
+                <div class="col s2 offset-s1 program-dropdown" style="position: relative;">
+                    <input  type="text" id="program" placeholder="Program" style="margin: 0 .75rem;"/>
+                    <div class="dropcontent" hidden></div>
+                </div>
+            </div>
         </div>
+        <div class="container" id="number"></div>
+        <div class="container" id="results">
 
+        </div>
+    </div>
         <footer hidden>
             <div class="container center-align">
-            <h4>Hosted on <a href="https://github.com/jaynarw/placements-2019-20" target="_blank">Github</a></h4>
+            <h5>Hosted on <a href="https://github.com/jaynarw/placements-2019-20" target="_blank">Github</a></h5>
             </div>
         </footer>
     </body>
     <script>
+        let htmlStringAll;
+        let allRes;
         (async () => {
+            const deptNames = ["AE", "BSBE", "CE", "CHE", "CSE", "EE", "ME", "MSE", "PHY", "CHM", "MTH", "ECO", "DES", "IME", "HSS", "MSP", "ES", "Stats", "PSE", "CGS"];
+            const progNames = ["BT", "BS", "MT", "DOUBLEMAJOR", "DUAL", "DUALB", "DUALC", "MDES", "MBA", "PHD", "MSC", "MSR"];
+            // document.querySelector('.dept-dropdown .dropcontent').innerHTML =
+            // deptNames
+            //     .map(name => `<li>${name}<li>`)
+            //     .join('\n');
+            // document.querySelector('.program-dropdown .dropcontent').innerHTML =
+            // progNames
+            //     .map(name => `<li>${name}<li>`)
+            //     .join('\n');
+
+
             const response = await fetch('https://api.github.com/repos/jaynarw/placements-2019-20/contents/archive');
             const data = await response.json();
-            htmlString = data
+            htmlElems = data
                 .map(data => data.name)
                 .filter(file => file.endsWith('.html'))
                 .map(file => file.slice(0, -5))
-                .map(file => `<li class="list-group-item"><a href="archive/${file}.html" target="_blank">${file}</a></li>`)
-                .join('\n');
-            document.getElementsByTagName('ul')[0].innerHTML = htmlString;
+                .map(file => `<div class="collection"><a class="collection-item" href="archive/${file}.html" target="_blank">${file}</a></div>`);
+            htmlString = htmlElems.join('\n');
+            htmlStringAll=htmlString;
+            allRes = htmlElems.length;
+            document.getElementById('results').innerHTML = htmlString;
+            document.getElementById('number').textContent = `Results - ${htmlElems.length}`;
             document.querySelector('footer').removeAttribute('hidden');
-        })()
+            // document.querySelector('#dept').addEventListener('blur', () => {
+            //     document.querySelector('.dept-dropdown .dropcontent').setAttribute('hidden','');
+            // });
+            // document.querySelector('#program').addEventListener('blur', () => {
+            //     document.querySelector('.program-dropdown .dropcontent').setAttribute('hidden','');
+            // });
+            // document.querySelector('#dept').addEventListener('focus', () => {
+            //     document.querySelector('.dept-dropdown .dropcontent').removeAttribute('hidden');
+            // });
+            // document.querySelector('#program').addEventListener('focus', () => {
+            //     document.querySelector('.program-dropdown .dropcontent').removeAttribute('hidden');
+            // });
+
+            function autocomplete(inp, arr) {
+                /*the autocomplete function takes two arguments,
+                the text field element and an array of possible autocompleted values:*/
+                var currentFocus;
+                let isMouseDown = false;
+
+                inp.addEventListener('blur', function (e) {
+                    if(!isMouseDown)
+                        closeAllLists();
+                });
+                inp.parentNode.addEventListener('mousedown', function() {
+                    isMouseDown = true;  
+                });
+
+                inp.parentNode.addEventListener('mouseup', function() {
+                    isMouseDown = false;  
+                });
+
+                inp.parentNode.addEventListener('mouseleave', function() {
+                    isMouseDown = false;  
+                });
+
+                inp.addEventListener('focus', function (e) {
+                    if(inp.value === '' && !this.parentNode.querySelector(`#${this.id}autocomplete-list`)) {
+                        a = document.createElement("DIV");
+                        a.setAttribute("id", this.id + "autocomplete-list");
+                        a.setAttribute("class", "autocomplete-items");
+                        this.parentNode.appendChild(a);
+                        for (i = 0; i < arr.length; i++) {
+                        /*check if the item starts with the same letters as the text field value:*/
+                        /*create a DIV element for each matching element:*/
+                            b = document.createElement("DIV");
+                            /*make the matching letters bold:*/
+                            b.innerHTML = arr[i];
+                            /*insert a input field that will hold the current array item's value:*/
+                            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                            /*execute a function when someone clicks on the item value (DIV element):*/
+                                b.addEventListener("click", function(e) {
+                                /*insert the value for the autocomplete text field:*/
+                                inp.value = this.getElementsByTagName("input")[0].value;
+                                executeSearch();
+                                /*close the list of autocompleted values,
+                                (or any other open lists of autocompleted values:*/
+                                closeAllLists();
+
+                            });
+                            a.appendChild(b);
+                        }
+                    }
+                });
+                /*execute a function when someone writes in the text field:*/
+                inp.addEventListener("input", function(e) {
+                    executeSearch();
+                    var a, b, i, val = this.value;
+                    /*close any already open lists of autocompleted values*/
+                    closeAllLists();
+                    if (!val) { 
+                        a = document.createElement("DIV");
+                        a.setAttribute("id", this.id + "autocomplete-list");
+                        a.setAttribute("class", "autocomplete-items");
+                        this.parentNode.appendChild(a);
+                        for (i = 0; i < arr.length; i++) {
+                        /*check if the item starts with the same letters as the text field value:*/
+                        /*create a DIV element for each matching element:*/
+                            b = document.createElement("DIV");
+                            /*make the matching letters bold:*/
+                            b.innerHTML = arr[i];
+                            /*insert a input field that will hold the current array item's value:*/
+                            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                            /*execute a function when someone clicks on the item value (DIV element):*/
+                                b.addEventListener("click", function(e) {
+                                /*insert the value for the autocomplete text field:*/
+                                inp.value = this.getElementsByTagName("input")[0].value;
+                                executeSearch();
+                                /*close the list of autocompleted values,
+                                (or any other open lists of autocompleted values:*/
+                                closeAllLists();
+
+                            });
+                            a.appendChild(b);
+                        }
+                        return false;
+                    }
+                    currentFocus = -1;
+                    /*create a DIV element that will contain the items (values):*/
+                    a = document.createElement("DIV");
+                    a.setAttribute("id", this.id + "autocomplete-list");
+                    a.setAttribute("class", "autocomplete-items");
+                    /*append the DIV element as a child of the autocomplete container:*/
+                    this.parentNode.appendChild(a);
+                    /*for each item in the array...*/
+                    for (i = 0; i < arr.length; i++) {
+                        /*check if the item starts with the same letters as the text field value:*/
+                        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                        /*create a DIV element for each matching element:*/
+                        b = document.createElement("DIV");
+                        /*make the matching letters bold:*/
+                        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                        b.innerHTML += arr[i].substr(val.length);
+                        /*insert a input field that will hold the current array item's value:*/
+                        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                        /*execute a function when someone clicks on the item value (DIV element):*/
+                            b.addEventListener("click", function(e) {
+                            /*insert the value for the autocomplete text field:*/
+                            inp.value = this.getElementsByTagName("input")[0].value;
+                            executeSearch();
+                            /*close the list of autocompleted values,
+                            (or any other open lists of autocompleted values:*/
+                            closeAllLists();
+
+                        });
+                        a.appendChild(b);
+                        }
+                    }
+                });
+                /*execute a function presses a key on the keyboard:*/
+                inp.addEventListener("keydown", function(e) {
+                    var x = document.getElementById(this.id + "autocomplete-list");
+                    if (x) x = x.getElementsByTagName("div");
+                    if (e.keyCode == 40) {
+                        /*If the arrow DOWN key is pressed,
+                        increase the currentFocus variable:*/
+                        currentFocus++;
+                        /*and and make the current item more visible:*/
+                        addActive(x);
+                    } else if (e.keyCode == 38) { //up
+                        /*If the arrow UP key is pressed,
+                        decrease the currentFocus variable:*/
+                        currentFocus--;
+                        /*and and make the current item more visible:*/
+                        addActive(x);
+                    } else if (e.keyCode == 13) {
+                        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                        e.preventDefault();
+                        if (currentFocus > -1) {
+                        /*and simulate a click on the "active" item:*/
+                        if (x) x[currentFocus].click();
+                        }
+                    }
+                });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+      x[i].parentNode.removeChild(x[i]);
+    }
+  }
+}
+/*execute a function when someone clicks in the document:*/
+// document.addEventListener("click", function (e) {
+//     console.log(e.target.parentNode);
+//     // console.log(this.contains(inp));
+//     if(!this.contains(inp) && this !== inp) {
+//         closeAllLists(e.target);
+//     }
+
+// });
+}
+autocomplete(document.getElementById('dept'), deptNames);
+autocomplete(document.getElementById('program'), progNames);
+        })();
+        let searchIndexGlobal = {};
+        (async () => {
+            const searchIndexRes = await fetch('https://raw.githubusercontent.com/jaynarw/placements-2019-20/master/search.json');
+            const searchIndex = await searchIndexRes.json();
+            searchIndexGlobal = searchIndex;
+        })();
+        
+        function executeSearch() {
+            const dept = document.getElementById('dept').value;
+            const program = document.getElementById('program').value;
+            if(dept.trim() === "" && program.trim() === "") {
+                document.getElementById('results').innerHTML = htmlStringAll;
+                document.getElementById('number').textContent = `Results - ${allRes}`;
+                return;
+            }
+            else if(searchIndexGlobal[dept] && searchIndexGlobal[dept][program]) {
+                const fileNames = searchIndexGlobal[dept][program].map((file) => `<div class="collection"><a class="collection-item" href="archive/${file}" target="_blank">${file.slice(0,-5)}</a></div>`)
+                .join('\n');
+                document.getElementById('results').innerHTML = fileNames;
+                document.getElementById('number').textContent = `Results - ${searchIndexGlobal[dept][program].length}`;
+            } else {
+                document.getElementById('results').innerHTML = 'No results found';
+                document.getElementById('number').textContent = '';
+            }
+        }
     </script>
 </html>

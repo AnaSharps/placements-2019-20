@@ -26,8 +26,8 @@ fs.readdir(directoryPath, function (err, files) {
           for (let dept = 0; dept < numDepartments; dept++) {
             for (let program = 0; program < 12; program++) {
               if(cells[(dept+1)*13 + program + 1].textContent.toLowerCase().trim() === 'y') {
-                const deptName = cells[(dept+1)*13].textContent;
-                const programName = cells[(program+1)].textContent;
+                const deptName = cells[(dept+1)*13].textContent.toUpperCase().trim();
+                const programName = cells[(program+1)].textContent.toUpperCase().trim();
                 if(eligibilityDeptWise[deptName] && eligibilityDeptWise[deptName][programName]) {
                   eligibilityDeptWise[deptName][programName].push(file);
                 } else if(eligibilityDeptWise[deptName]) {

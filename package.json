@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jaynarw/placements-2019-20#readme",
   "dependencies": {
-    "jsdom": "^16.3.0"
+    "jsdom": "^16.3.0",
+    "react-dropdown-select": "^4.4.2"
   }
 }
