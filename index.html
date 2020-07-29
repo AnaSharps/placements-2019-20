@@ -381,8 +381,8 @@ autocomplete(document.getElementById('program'), progNames);
         })();
         
         function executeSearch() {
-            const dept = document.getElementById('dept').value;
-            const program = document.getElementById('program').value;
+            const dept = document.getElementById('dept').value.toUpperCase().trim();
+            const program = document.getElementById('program').value.toUpperCase().trim();
             if(dept.trim() === "" && program.trim() === "") {
                 document.getElementById('results').innerHTML = htmlStringAll;
                 document.getElementById('number').textContent = `Results - ${allRes}`;
